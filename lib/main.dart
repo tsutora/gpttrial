@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() => runApp(const PocketQuestApp());
 
-const _primary = Color(0xFF5B5FEF);
-const _mint = Color(0xFF42C58A);
-const _canvas = Color(0xFFF7F7FC);
+// A high-contrast, pastel palette: indigo is the action color, while pink,
+// mint, and butter yellow give the budgeting experience a friendly character.
+const _primary = Color(0xFF6C63E9);
+const _pink = Color(0xFFFF6FAE);
+const _mint = Color(0xFF42BFA0);
+const _butter = Color(0xFFFFD66B);
+const _canvas = Color(0xFFFFF8FC);
+const _ink = Color(0xFF302E4A);
 
 class Envelope {
   Envelope({
@@ -36,13 +42,29 @@ class PocketQuestApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         scaffoldBackgroundColor: _canvas,
-        colorScheme: ColorScheme.fromSeed(seedColor: _primary),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _primary,
+          primary: _primary,
+          secondary: _pink,
+          surface: Colors.white,
+          brightness: Brightness.light,
+        ),
+        textTheme: GoogleFonts.nunitoTextTheme().apply(bodyColor: _ink, displayColor: _ink),
         cardTheme: const CardThemeData(
-          elevation: 0,
+          elevation: 1,
+          shadowColor: Color(0x1A6C63E9),
           margin: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderRadius: BorderRadius.all(Radius.circular(24)),
           ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: const Color(0xFFFFFBFD),
+          labelStyle: GoogleFonts.nunito(fontWeight: FontWeight.w700),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Color(0xFFE8E1F1))),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Color(0xFFE8E1F1))),
+          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: _primary, width: 2)),
         ),
       ),
       home: const PocketQuestHome(),
@@ -97,12 +119,14 @@ class _PocketQuestHomeState extends State<PocketQuestHome> {
       body: SafeArea(child: pages[_selectedTab]),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openTransactionSheet,
-        backgroundColor: _primary,
+        backgroundColor: _pink,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: const Text('Transaksi'),
       ),
       bottomNavigationBar: NavigationBar(
+        backgroundColor: Colors.white,
+        indicatorColor: const Color(0xFFE5E2FF),
         selectedIndex: _selectedTab,
         onDestinationSelected: (value) => setState(() => _selectedTab = value),
         destinations: const [
@@ -128,7 +152,10 @@ class DashboardPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 110),
       children: [
-        Text('Halo, Andi 👋', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+        Row(children: [
+          Expanded(child: Text('Halo, Andi! ✨', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900)),
+          const _CuteBadge(),
+        ]),
         const SizedBox(height: 2),
         Text('Level 8 • Budget Explorer', style: TextStyle(color: Colors.grey.shade600)),
         const SizedBox(height: 18),
@@ -167,7 +194,7 @@ class XpCard extends StatelessWidget {
               Text('Level 8', style: TextStyle(color: Colors.white)),
             ]),
             const SizedBox(height: 10),
-            const LinearProgressIndicator(value: .76, minHeight: 8, color: Color(0xFFFFD166), backgroundColor: Color(0x40555555), borderRadius: BorderRadius.all(Radius.circular(8))),
+            const LinearProgressIndicator(value: .76, minHeight: 9, color: _butter, backgroundColor: Color(0x406C63E9), borderRadius: BorderRadius.all(Radius.circular(8))),
             const SizedBox(height: 6),
             Text('760 / 1.000 XP • Catat transaksi untuk menjaga streak!', style: TextStyle(color: Colors.white.withOpacity(.9), fontSize: 12)),
           ]),
@@ -211,11 +238,11 @@ class EnvelopeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isNearLimit = envelope.usage > .8;
     return Card(
-      color: Colors.white,
+      color: const Color(0xFFFFFFFF),
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Row(children: [
-          Container(width: 48, height: 48, alignment: Alignment.center, decoration: BoxDecoration(color: envelope.color, borderRadius: BorderRadius.circular(14)), child: Text(envelope.emoji, style: const TextStyle(fontSize: 23))),
+          Container(width: 50, height: 50, alignment: Alignment.center, decoration: BoxDecoration(color: envelope.color, borderRadius: BorderRadius.circular(17)), child: Text(envelope.emoji, style: const TextStyle(fontSize: 24))),
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -351,7 +378,22 @@ class SectionTitle extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Text(text, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold));
+  Widget build(BuildContext context) => Text(text, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900));
+}
+
+class _CuteBadge extends StatelessWidget {
+  const _CuteBadge();
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
+        decoration: BoxDecoration(color: const Color(0xFFFFE1EE), borderRadius: BorderRadius.circular(16)),
+        child: const Row(mainAxisSize: MainAxisSize.min, children: [
+          Text('🐷', style: TextStyle(fontSize: 18)),
+          SizedBox(width: 4),
+          Text('Good job!', style: TextStyle(color: _pink, fontWeight: FontWeight.w900, fontSize: 12)),
+        ]),
+      );
 }
 
 class TransactionSheet extends StatefulWidget {
